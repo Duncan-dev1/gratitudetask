@@ -8,11 +8,11 @@ trait LoadExistingAssignmentsTrait {
         $existingassignments = $existingassignments->map( function ($assignment) {
             return [
                 'id' => $assignment->id,
-                'car' => $assignment->car->registration_number,
+                'car_registration_number' => $assignment->car->registration_number,
                 'car_id' => $assignment->car->id,
-                'category' => $assignment->category->category_name,
+                'category_name' => $assignment->category->category_name,
                 'category_id' => $assignment->category->id,
-                'mechanic' => $assignment->mechanic->name,
+                'mechanic_name' => $assignment->mechanic->name,
                 'mechanic_id' => $assignment->mechanic->id,
             ];
         });

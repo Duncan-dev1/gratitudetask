@@ -19,9 +19,9 @@
                 <tbody>
                     <tr v-for="assignment in assignments">
                         <th scope="row">1</th>
-                        <td>{{assignment.car}}</td>
-                        <td>{{assignment.category}}</td>
-                        <td>{{assignment.mechanic}}</td>
+                        <td>{{assignment.car_registration_number}}</td>
+                        <td>{{assignment.category_name}}</td>
+                        <td>{{assignment.mechanic_name}}</td>
                         <td style="text-align:center">
                             <div class="btn-group mr-1 mt-2">
                                 <button class="btn btn-info" @click="loadEditAssignment(assignment)" style="margin-right: 2px;" type="button">
