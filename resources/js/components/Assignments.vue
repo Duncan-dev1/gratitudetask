@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <div class="col-lg-12 button-container">
-                <button type="button" @click="loadAssignmentForm" class="btn btn-rounded btn-success margin-inline add-facility">Assign</button>
+                <button type="button" v-if="!assignmentMode" @click="loadAssignmentForm" class="btn btn-rounded btn-success margin-inline add-facility">Assign</button>
             </div>
         </div>
         <div class="assignments-table" v-show="!assignmentMode">
@@ -13,6 +13,7 @@
                         <th scope="col">Reg</th>
                         <th scope="col">Category</th>
                         <th scope="col">Mechanic</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -21,6 +22,17 @@
                         <td>{{assignment.car}}</td>
                         <td>{{assignment.category}}</td>
                         <td>{{assignment.mechanic}}</td>
+                        <td style="text-align:center">
+                            <div class="btn-group mr-1 mt-2">
+                                <button class="btn btn-info" @click="loadEditAssignment(assignment)" style="margin-right: 2px;" type="button">
+                                    Edit 
+                                </button>
+
+                                <button class="btn btn-danger" @click="deleteAssignment(assignment)" type="button">
+                                    Delete 
+                                </button>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -34,7 +46,7 @@
                         <form
                             @submit.prevent="
                                 AssignmentEditMode
-                                    ? editAssignment()
+                                    ? updateAssignment()
                                     : storeAssignment()
                             "
                         >
@@ -50,6 +62,7 @@
                                             )
                                         }"
                                         required="required"
+                                        :disabled="AssignmentEditMode"
                                     >
                                         <option value=""
                                             >-- Select Car 
@@ -130,15 +143,13 @@
                             <div class="modal-footer">
                                 <button
                                     type="button"
-                                    id="del-add-calendar"
                                     class="btn btn-light waves-effect"
-                                    data-dismiss="modal"
+                                    @click="hideAssignmentForm"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    id="add-calendar-button"
                                     class="btn btn-success waves-effect waves-light"
                                     :disabled="form.busy"
                                 >
@@ -164,6 +175,8 @@
    </div>
 </template>
 <script>
+import axios from 'axios';
+
 
 export default {
     props : ['existingassignments', 'cars', 'categories', 'mechanics'],
@@ -176,6 +189,7 @@ export default {
             assignmentMode:false,
 
             form:new Form({
+                id:'',
                 car_id:'',
                 category_id:'',
                 mechanic_id:'',
@@ -196,10 +210,55 @@ export default {
             })
             .then( ({ data }) => {
                 this.assignments = data.existingassignments;  
-                this.assignmentMode = false
+                this.assignmentMode = false;
+
+                this.form.reset();
             })
             .catch( ({ error }) => {
+                alert('error pop up comes here')
+            })
+        },
 
+        hideAssignmentForm(){
+            this.assignmentMode = false;
+        },
+
+        loadEditAssignment(assignment){ 
+            this.form.id = assignment.id
+            this.form.car_id = assignment.car_id
+            this.form.category_id = assignment.category_id
+            this.form.mechanic_id = assignment.mechanic_id
+
+            this.assignmentMode = true
+            this.AssignmentEditMode = true
+        },
+
+        updateAssignment(){ 
+            axios.put('car-assignment', {
+                id:this.form.id,
+                car_id:this.form.car_id,
+                category_id:this.form.category_id,
+                mechanic_id:this.form.mechanic_id
+            })
+            .then( ({ data }) => {
+                this.assignments = data.existingassignments;  
+                this.assignmentMode = false;
+                this.AssignmentEditMode = false;
+
+                this.form.reset();
+            })
+            .catch( ({ error }) => {
+                alert('error pop up comes here')
+            })
+        },
+
+        deleteAssignment(assignment){
+            axios.delete('car-assignment/' + assignment.id)
+            .then( ({ data }) => {
+                this.assignments = data.existingassignments;  
+            })
+            .catch( ({ error }) => {
+                alert('error pop up comes here')
             })
         }
     },

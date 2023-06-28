@@ -16,10 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 //Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/', function () {
-    return view('layouts.master');
-});
 
-Route::get('car-assignments', [CarMechanicAssignmentController::class, 'index']);
+Route::get('/', [CarMechanicAssignmentController::class, 'index']);
 Route::post('car-assignment', [CarMechanicAssignmentController::class, 'store']);
+Route::put('car-assignment', [CarMechanicAssignmentController::class, 'update']);
+Route::delete('car-assignment/{id}', [CarMechanicAssignmentController::class, 'destroy']);
 
